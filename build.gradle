@@ -25,41 +25,6 @@ configure(allprojects){
     }
 }
 
-configure(rootProject){
-    sourceSets.main.java.srcDirs = [layout.projectDirectory.dir('src')]
-    version = projectVersion
-
-    java{
-        withSourcesJar()
-        withJavadocJar()
-    }
-
-    dependencies{
-        annotationProcessor project(':annotations')
-        compileOnly project(':annotations')
-
-        compileOnlyApi "${arc(':arc-core')}"
-        compileOnlyApi "${arc(':g3d')}"
-    }
-
-    tasks.withType(JavaCompile).configureEach{
-        sourceCompatibility = compilerVersion
-        options.release = 8
-        options.compilerArgs << '-Xlint:-options'
-
-        options.incremental = true
-        options.encoding = 'UTF-8'
-    }
-
-    tasks.withType(Jar).configureEach{
-        exclude 'gltfrenzy/spec/**'
-    }
-
-    publishing.publications.create('maven', MavenPublication){
-        from components.java
-    }
-}
-
 configure(project(':annotations')){
     sourceSets.main{
         java.srcDirs = [layout.projectDirectory.dir('src')]
@@ -90,4 +55,39 @@ configure(project(':annotations')){
             sourceCompatibility = 8
         }
     }
+}
+
+sourceSets.main.java.srcDirs = [layout.projectDirectory.dir('src')]
+
+group = 'com.github.GlennFolker'
+version = projectVersion
+
+java{
+    withSourcesJar()
+    withJavadocJar()
+}
+
+dependencies{
+    annotationProcessor project(':annotations')
+    compileOnly project(':annotations')
+
+    compileOnlyApi "${arc(':arc-core')}"
+    compileOnlyApi "${arc(':g3d')}"
+}
+
+tasks.withType(JavaCompile).configureEach{
+    sourceCompatibility = compilerVersion
+    options.release = 8
+    options.compilerArgs << '-Xlint:-options'
+
+    options.incremental = true
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Jar).configureEach{
+    exclude 'gltfrenzy/spec/**'
+}
+
+publishing.publications.create('maven', MavenPublication){
+    from components.java
 }

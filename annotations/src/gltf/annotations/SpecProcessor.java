@@ -39,7 +39,7 @@ public class SpecProcessor implements Processor{
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv){
         for(var req : annotations){
-            if(!types.isSameType(req.asType(), elements.getTypeElement(Spec.class.getName()).asType())) continue;
+            if(!types.isSameType(req.asType(), elements.getTypeElement(Spec.class.getCanonicalName()).asType())) continue;
             for(var spec : roundEnv.getElementsAnnotatedWith(req)){
                 var anno = spec.getAnnotation(Spec.class);
                 var outType = ClassName.get(packageName, spec.getSimpleName().toString());
@@ -92,7 +92,6 @@ public class SpecProcessor implements Processor{
                     .addMethod(MethodSpec
                         .constructorBuilder()
                         .addModifiers(PRIVATE)
-                        .addStatement("throw new $T()", ClassName.get(AssertionError.class))
                     .build())
                     .addField(FieldSpec
                         .builder(ClassName.get(Jval.class), "extensions", PUBLIC)
@@ -242,38 +241,38 @@ public class SpecProcessor implements Processor{
 
             @Override
             public Void visitDeclared(DeclaredType t, Void unused){
-                if(types.isSameType(t, elements.getTypeElement(String.class.getName()).asType())){
+                if(types.isSameType(t, elements.getTypeElement(String.class.getCanonicalName()).asType())){
                     create.addStatement("$L = $L.asString()", name, json);
-                }else if(types.isSameType(t, elements.getTypeElement(Color.class.getName()).asType())){
+                }else if(types.isSameType(t, elements.getTypeElement(Color.class.getCanonicalName()).asType())){
                     create
                         .addStatement("$T $L__array = $L.asArray()", ClassName.get(JsonArray.class), name, json)
                         .addStatement(
                             "$L = new $T($L__array.get(0).asFloat(), $L__array.get(1).asFloat(), $L__array.get(2).asFloat(), $L__array.get(3).asFloat())",
                             name, ClassName.get(Color.class), name, name, name, name
                         );
-                }else if(types.isSameType(t, elements.getTypeElement(Vec3.class.getName()).asType())){
+                }else if(types.isSameType(t, elements.getTypeElement(Vec3.class.getCanonicalName()).asType())){
                     create
                         .addStatement("$T $L__array = $L.asArray()", ClassName.get(JsonArray.class), name, json)
                         .addStatement(
                             "$L = new $T($L__array.get(0).asFloat(), $L__array.get(1).asFloat(), $L__array.get(2).asFloat())",
                             name, ClassName.get(Vec3.class), name, name, name
                         );
-                }else if(types.isSameType(t, elements.getTypeElement(Mat3D.class.getName()).asType())){
+                }else if(types.isSameType(t, elements.getTypeElement(Mat3D.class.getCanonicalName()).asType())){
                     create
                         .addStatement("$T $L__array = $L.asArray()", ClassName.get(JsonArray.class), name, json)
                         .addStatement("$L = new $T()", name, ClassName.get(Mat3D.class))
                         .beginControlFlow("for(int $L__i = 0; $L__i < 16; $L__i++)", name, name, name)
                             .addStatement("$L.val[$L__i] = $L__array.get($L__i).asFloat()", name, name, name, name)
                         .endControlFlow();
-                }else if(types.isSameType(t, elements.getTypeElement(Quat.class.getName()).asType())){
+                }else if(types.isSameType(t, elements.getTypeElement(Quat.class.getCanonicalName()).asType())){
                     create
                         .addStatement("$T $L__array = $L.asArray()", ClassName.get(JsonArray.class), name, json)
                         .addStatement(
                             "$L = new $T($L__array.get(0).asFloat(), $L__array.get(1).asFloat(), $L__array.get(2).asFloat(), $L__array.get(3).asFloat())",
                             name, ClassName.get(Quat.class), name, name, name, name
                         );
-                }else if(types.isSameType(t, elements.getTypeElement(Jval.class.getName()).asType())){
-                    create.addStatement("$L = $L", name, json);
+                }else if(types.isSameType(t, elements.getTypeElement(JsonMap.class.getCanonicalName()).asType())){
+                    create.addStatement("$L = $L.asObject()", name, json);
                 }else{
                     var type = change(t);
                     if(type.toString().startsWith("gltfrenzy.data")){
