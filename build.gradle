@@ -1,0 +1,93 @@
+plugins{
+    id 'java-library'
+    id 'maven-publish'
+}
+
+configure(allprojects){
+    apply plugin: 'java-library'
+    ext{
+        compilerVersion = JavaVersion.current().ordinal() - JavaVersion.VERSION_17.ordinal() + 17
+        arc = {String module ->
+            "com.github.Anuken.Arc$module:$arcVersion"
+        }
+    }
+
+    dependencies{
+        annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
+    }
+
+    repositories{
+        mavenCentral()
+        maven{url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+        maven{url 'https://oss.sonatype.org/content/repositories/releases/'}
+        maven{url 'https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository'}
+        maven{url 'https://jitpack.io'}
+    }
+}
+
+configure(rootProject){
+    sourceSets.main.java.srcDirs = [layout.projectDirectory.dir('src')]
+    version = projectVersion
+
+    java{
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    dependencies{
+        annotationProcessor project(':annotations')
+        compileOnly project(':annotations')
+
+        compileOnlyApi "${arc(':arc-core')}"
+        compileOnlyApi "${arc(':g3d')}"
+    }
+
+    tasks.withType(JavaCompile).configureEach{
+        sourceCompatibility = compilerVersion
+        options.release = 8
+        options.compilerArgs << '-Xlint:-options'
+
+        options.incremental = true
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Jar).configureEach{
+        exclude 'gltfrenzy/spec/**'
+    }
+
+    publishing.publications.create('maven', MavenPublication){
+        from components.java
+    }
+}
+
+configure(project(':annotations')){
+    sourceSets.main{
+        java.srcDirs = [layout.projectDirectory.dir('src')]
+        resources.srcDirs = [layout.projectDirectory.dir('assets')]
+    }
+
+    java{
+        toolchain{
+            languageVersion = JavaLanguageVersion.of(compilerVersion)
+        }
+    }
+
+    dependencies{
+        implementation "${arc(':arc-core')}"
+        implementation "${arc(':g3d')}"
+        implementation "com.squareup:javapoet:$javapoetVersion"
+    }
+
+    tasks.withType(JavaCompile).configureEach{
+        options.incremental = true
+        options.encoding = 'UTF-8'
+        options.compilerArgs << '-Xlint:-options'
+
+        sourceCompatibility = compilerVersion
+        targetCompatibility = 8
+
+        doFirst{
+            sourceCompatibility = 8
+        }
+    }
+}
