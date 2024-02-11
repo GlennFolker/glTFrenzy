@@ -2,5 +2,6 @@ before_install:
   - sdk install java 21.0.1-tem
   - sdk use java 21.0.1-tem
 install:
+  - chmod +x gradlew
   - ./gradlew publishToMavenLocal
   - echo -n > gradle.properties
