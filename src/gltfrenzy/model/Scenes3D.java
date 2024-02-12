@@ -9,10 +9,15 @@ import arc.util.*;
  */
 public class Scenes3D implements Disposable{
     public final Seq<MeshSet> meshes = new Seq<>();
-    public final ObjectIntMap<String> meshNames = new ObjectIntMap<>();
+    public final ObjectMap<String, MeshSet> meshNames = new ObjectMap<>();
+
+    public final Seq<Node> nodes = new Seq<>();
+    public final ObjectMap<String, Node> nodeNames = new ObjectMap<>();
+    public final IntSeq rootNodes = new IntSeq();
 
     @Override
     public void dispose(){
         meshes.each(MeshSet::dispose);
+        meshes.clear();
     }
 }

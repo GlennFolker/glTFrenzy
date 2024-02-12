@@ -13,6 +13,7 @@ import gltfrenzy.loader.Scenes3DLoader.MeshContainerQueue.*;
 import gltfrenzy.loader.Scenes3DReader.*;
 import gltfrenzy.model.*;
 import gltfrenzy.model.MeshSet.*;
+import gltfrenzy.model.Node;
 
 import java.io.*;
 import java.nio.*;
@@ -26,6 +27,7 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
     protected final Scenes3DReader reader;
     protected Scenes3D asset;
     protected MeshContainerQueue[] meshes;
+    protected int[] nodeMeshes;
 
     public Scenes3DLoader(FileHandleResolver resolver, Scenes3DReader reader){
         super(resolver);
@@ -65,7 +67,7 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
         for(int i = 0; i < meshes.length; i++){
             var mesh = spec.meshes[i];
             var cont = meshes[i] = new MeshContainerQueue();
-            cont.name = mesh.name == null ? "" : mesh.name;
+            cont.name = mesh.name;
 
             cont.containers = new MeshQueue[mesh.primitives.length];
             for(int m = 0; m < mesh.primitives.length; m++){
@@ -182,6 +184,36 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
                 queue.mode = primitives.mode;
             }
         }
+
+        // TODO Handle skin and bone weights.
+        nodeMeshes = new int[spec.nodes.length];
+        for(int i = 0; i < spec.nodes.length; i++){
+            var out = new Node();
+            var node = spec.nodes[i];
+
+            out.name = node.name;
+            nodeMeshes[i] = node.mesh;
+
+            if(node.matrix == null){
+                out.localTrns.translation.set(node.translation);
+                out.localTrns.rotation.set(node.rotation);
+                out.localTrns.scale.set(node.scale);
+            }else{
+                node.matrix.getTranslation(out.localTrns.translation);
+                node.matrix.getRotation(out.localTrns.rotation);
+                node.matrix.getScale(out.localTrns.scale);
+            }
+
+            asset.nodes.add(out);
+            if(!out.name.isEmpty()) asset.nodeNames.put(out.name, out);
+        }
+
+        for(int i = 0; i < asset.nodes.size; i++){
+            var node = asset.nodes.get(i);
+            node.children.each(c -> c.parent = node);
+        }
+
+        asset.nodes.each(Node::update);
     }
 
     @Override
@@ -217,11 +249,16 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
             }
 
             out.meshes.add(set);
-            if(!set.name.isEmpty()) out.meshNames.put(set.name, out.meshes.size - 1);
+            if(!set.name.isEmpty()) out.meshNames.put(set.name, set);
+        }
+
+        for(int i = 0; i < nodeMeshes.length; i++){
+            out.nodes.get(i).mesh = out.meshes.get(i);
         }
 
         asset = null;
         meshes = null;
+        nodeMeshes = null;
         return out;
     }
 

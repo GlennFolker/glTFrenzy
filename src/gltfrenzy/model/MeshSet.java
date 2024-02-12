@@ -13,7 +13,8 @@ public class MeshSet implements Disposable{
 
     @Override
     public void dispose(){
-        for(var cont : containers) cont.dispose();
+        containers.each(MeshContainer::dispose);
+        containers.clear();
     }
 
     public static class MeshContainer implements Disposable{

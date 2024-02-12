@@ -103,12 +103,7 @@ public class SpecProcessor implements Processor{
                     .build());
 
                 boolean named = spec.getAnnotation(Named.class) != null;
-                if(named){
-                    builder.addField(FieldSpec
-                        .builder(ClassName.get(String.class), "name", PUBLIC)
-                        .addAnnotation(ClassName.get(Nullable.class))
-                    .build());
-                }
+                if(named) builder.addField(ClassName.get(String.class), "name", PUBLIC);
 
                 var create = MethodSpec.methodBuilder("create")
                     .addModifiers(PUBLIC, STATIC)
@@ -118,7 +113,7 @@ public class SpecProcessor implements Processor{
                     .addStatement("out.extensions = json.get($S)", "extensions")
                     .addStatement("out.extras = json.get($S)", "extras");
 
-                if(named) create.addStatement("out.name = json.getString($S)", "name");
+                if(named) create.addStatement("out.name = json.getString($S, $S)", "name", "");
                 for(var prop : anno.value()){
                     var name = prop.name();
                     var type = type(prop::type);
