@@ -75,6 +75,12 @@ dependencies{
     compileOnlyApi "${arc(':g3d')}"
 }
 
+jar{
+    metaInf{
+        from layout.projectDirectory.file('LICENSE')
+    }
+}
+
 tasks.withType(JavaCompile).configureEach{
     sourceCompatibility = compilerVersion
     options.release = 8
