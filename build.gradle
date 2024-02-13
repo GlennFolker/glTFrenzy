@@ -48,7 +48,7 @@ configure(project(':annotations')){
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:-options'
 
-        sourceCompatibility = compilerVersion
+        sourceCompatibility = 17
         targetCompatibility = 8
 
         doFirst{
@@ -76,22 +76,19 @@ dependencies{
 }
 
 jar{
+    exclude 'gltfrenzy/spec/**'
     metaInf{
         from layout.projectDirectory.file('LICENSE')
     }
 }
 
 tasks.withType(JavaCompile).configureEach{
-    sourceCompatibility = compilerVersion
+    sourceCompatibility = 17
     options.release = 8
     options.compilerArgs << '-Xlint:-options'
 
     options.incremental = true
     options.encoding = 'UTF-8'
-}
-
-tasks.withType(Jar).configureEach{
-    exclude 'gltfrenzy/spec/**'
 }
 
 publishing.publications.create('maven', MavenPublication){

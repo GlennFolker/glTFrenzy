@@ -1,6 +1,6 @@
 before_install:
-  - sdk install java 21.0.1-tem
-  - sdk use java 21.0.1-tem
+  - sdk install java 17.0.10-tem
+  - sdk use java 17.0.10-tem
 install:
   - chmod +x gradlew
   - ./gradlew publishToMavenLocal
