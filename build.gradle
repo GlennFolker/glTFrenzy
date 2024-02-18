@@ -6,7 +6,6 @@ plugins{
 configure(allprojects){
     apply plugin: 'java-library'
     ext{
-        compilerVersion = JavaVersion.current().ordinal() - JavaVersion.VERSION_17.ordinal() + 17
         arc = {String module ->
             "com.github.Anuken.Arc$module:$arcVersion"
         }
@@ -29,12 +28,6 @@ configure(project(':annotations')){
     sourceSets.main{
         java.srcDirs = [layout.projectDirectory.dir('src')]
         resources.srcDirs = [layout.projectDirectory.dir('assets')]
-    }
-
-    java{
-        toolchain{
-            languageVersion = JavaLanguageVersion.of(compilerVersion)
-        }
     }
 
     dependencies{
