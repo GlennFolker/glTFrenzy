@@ -16,6 +16,7 @@ import gltfrenzy.model.MeshSet.*;
 import gltfrenzy.model.Node;
 
 import java.io.*;
+import java.net.*;
 import java.nio.*;
 import java.util.*;
 
@@ -46,9 +47,23 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
             throw new RuntimeException(e);
         }
 
-        // TODO Handle URI buffers.
         var spec = data.spec;
         var buffers = data.buffers;
+
+        for(int i = 0; i < spec.buffers.length; i++){
+            var buffer = spec.buffers[i];
+
+            var uri = URI.create(buffer.uri);
+            var scheme = uri.getScheme();
+            if(scheme == null){
+                var bufFile = resolve(file.parent().child(buffer.uri).path());
+                var output = buffers[i] = ByteBuffer.wrap(bufFile.readBytes());
+                output.order(ByteOrder.LITTLE_ENDIAN);
+            }else{
+                //TODO Base-64 buffers.
+            }
+        }
+
         var bufferViews = new ByteBuffer[spec.bufferViews.length];
         for(int i = 0; i < bufferViews.length; i++){
             var view = spec.bufferViews[i];
@@ -210,7 +225,11 @@ public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DPa
 
         for(int i = 0; i < asset.nodes.size; i++){
             var node = asset.nodes.get(i);
-            node.children.each(c -> c.parent = node);
+            for(int child : spec.nodes[i].children){
+                var c = asset.nodes.get(child);
+                c.parent = node;
+                node.children.add(c);
+            }
         }
 
         asset.nodes.each(Node::update);
