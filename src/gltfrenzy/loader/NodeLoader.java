@@ -26,7 +26,7 @@ public class NodeLoader extends SynchronousAssetLoader<Node, NodeParameter>{
         var scenes = manager.get(sceneName, Scenes3D.class);
         var target = fileName.substring(hash + 1);
 
-        return scenes.nodeNames.getThrow(target, () -> new IllegalArgumentException("Node '" + target + "' not found in '" + sceneName + "'."));
+        return scenes.node(target);
     }
 
     @Override

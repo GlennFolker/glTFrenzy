@@ -30,6 +30,14 @@ public class Scenes3D implements Disposable{
     public final ObjectMap<String, Node> nodeNames = new ObjectMap<>();
     public final IntSeq rootNodes = new IntSeq();
 
+    public MeshSet mesh(String name){
+        return meshNames.getThrow(name, () -> new IllegalArgumentException("Mesh '" + name + "' not found."));
+    }
+
+    public Node node(String name){
+        return nodeNames.getThrow(name, () -> new IllegalArgumentException("Node '" + name + "' not found."));
+    }
+
     @Override
     public void dispose(){
         meshes.each(MeshSet::dispose);

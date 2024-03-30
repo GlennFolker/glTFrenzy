@@ -26,7 +26,7 @@ public class MeshSetLoader extends SynchronousAssetLoader<MeshSet, MeshSetParame
         var scenes = manager.get(sceneName, Scenes3D.class);
         var target = fileName.substring(hash + 1);
 
-        return scenes.meshNames.getThrow(target, () -> new IllegalArgumentException("Mesh '" + target + "' not found in '" + sceneName + "'."));
+        return scenes.mesh(target);
     }
 
     @Override
