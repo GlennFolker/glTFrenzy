@@ -10,7 +10,7 @@ import gltfrenzy.model.*;
 
 /**
  * Convenience loader to automatically fetch a mesh by-name from a {@link Scenes3D}.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class NodeLoader extends SynchronousAssetLoader<Node, NodeParameter>{
     public NodeLoader(FileHandleResolver resolver){

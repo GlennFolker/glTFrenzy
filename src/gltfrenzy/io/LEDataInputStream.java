@@ -4,7 +4,7 @@ import java.io.*;
 
 /**
  * A little-endian {@link DataInputStream}.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class LEDataInputStream extends InputStream implements DataInput{
     private final byte[] buffer = new byte[8];

@@ -6,7 +6,7 @@ import arc.util.*;
 
 /**
  * Defines an object node in the hierarchy tree. Children of this node inherits its transform.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class Node{
     private static final Mat3D mat = new Mat3D();

@@ -14,7 +14,7 @@ import java.io.*;
 
 /**
  * Asynchronous asset loader implementation to load {@link Scenes3D} assets from either {@code .gltf} or {@code .glb} files.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class Scenes3DLoader extends AsynchronousAssetLoader<Scenes3D, Scenes3DParameter> implements FileHandleResolver{
     protected final Scenes3DReader reader;

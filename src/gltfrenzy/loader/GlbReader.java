@@ -12,7 +12,7 @@ import java.nio.charset.*;
 
 /**
  * Reader implementation for {@code .glb} monolithic binary file.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class GlbReader implements Scenes3DReader{
     @Override

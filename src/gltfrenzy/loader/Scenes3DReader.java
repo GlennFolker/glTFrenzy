@@ -8,7 +8,7 @@ import java.nio.*;
 
 /**
  * glTF asset reader abstraction.
- * @author GlennFolker
+ * @author GlFolker
  */
 public interface Scenes3DReader{
     Scenes3DData read(Fi file) throws IOException;

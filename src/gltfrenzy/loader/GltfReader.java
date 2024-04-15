@@ -9,7 +9,7 @@ import java.nio.*;
 
 /**
  * Reader implementation for {@code .gltf} textual file.
- * @author GlennFolker
+ * @author GlFolker
  */
 public class GltfReader implements Scenes3DReader{
     @Override
